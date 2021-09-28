@@ -1,0 +1,23 @@
+﻿@page "/productos/crear"
+@inject NavigationManager  navigationManager
+<h2>Nuevo Producto</h2>
+
+<ProductoFormulario onValidSubmit="GrabarNuevo" Producto="producto" onCancel="Cancelar" />
+
+@code {
+
+    private Producto producto = new();
+
+    private async Task GrabarNuevo()
+    {
+        Console.WriteLine($"Graba {producto.NombreProducto}");
+        navigationManager.NavigateTo("/productos");
+
+    }
+
+    private async Task Cancelar()
+    {
+        navigationManager.NavigateTo("/productos");
+
+    }
+}

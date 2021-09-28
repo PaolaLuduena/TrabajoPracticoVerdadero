@@ -1,0 +1,24 @@
+﻿@page "/clientes/crear"
+@inject NavigationManager  navigationManager
+<h2>Nuevo Cliente</h2>
+
+<ClienteFormulario onValidSubmit="GrabarNuevo" Cliente="cliente" onCancel="Cancelar" />
+
+@code {
+
+    private Cliente cliente = new();
+
+    private async Task GrabarNuevo()
+    {
+        Console.WriteLine($"Graba {cliente.NombreCliente}");
+        navigationManager.NavigateTo("/clientes");
+       
+    }
+
+    private async Task Cancelar()
+    {
+        navigationManager.NavigateTo("/clientes");
+
+    }
+
+}

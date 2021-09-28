@@ -1,0 +1,41 @@
+﻿@page "/clientes/editar/{ClienteID:int}/{codCliente}/{nombCliente}"
+@inject NavigationManager  navigationManager
+
+<h2>Modificar Cliente</h2>
+<ClienteFormulario onValidSubmit="GrabarModificacion" Cliente="cliente" onCancel="Cancelar" />
+
+@code {
+
+    private Cliente cliente;
+    [Parameter] public int ClienteID { get; set; }
+    [Parameter] public string codCliente { get; set; }
+    [Parameter] public string nombCliente { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        cliente = new()
+        {
+            ID = ClienteID,
+            CodCliente = codCliente,
+            NombreCliente = nombCliente
+        };
+
+
+}
+
+    private async Task GrabarModificacion()
+    {
+        Console.WriteLine($"Graba modificacion {cliente.NombreCliente}");
+        navigationManager.NavigateTo("/clientes");
+    }
+
+    private async Task Cancelar()
+    {
+        navigationManager.NavigateTo("/clientes");
+
+    }
+
+
+
+}

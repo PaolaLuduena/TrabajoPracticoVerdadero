@@ -1,0 +1,41 @@
+﻿@page "/productos/editar/{ProductoID:int}/{codProducto}/{nomProducto}"
+@inject NavigationManager  navigationManager
+
+<h2>Modificar Producto</h2>
+<ProductoFormulario onValidSubmit="GrabarModificacion" Producto="producto" onCancel="Cancelar" />
+
+@code {
+
+    private Producto producto;
+    [Parameter] public int ProductoID { get; set; }
+    [Parameter] public string codProducto { get; set; }
+    [Parameter] public string nomProducto { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        producto = new()
+        {
+            ID = ProductoID,
+            CodProducto = codProducto,
+            NombreProducto = nomProducto
+        };
+
+
+    }
+
+    private async Task GrabarModificacion()
+    {
+        Console.WriteLine($"Graba modificacion {producto.NombreProducto}");
+        navigationManager.NavigateTo("/productos");
+    }
+
+    private async Task Cancelar()
+    {
+        navigationManager.NavigateTo("/productos");
+
+    }
+
+
+
+}

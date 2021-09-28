@@ -1,0 +1,97 @@
+﻿@page "/productos"
+<h2>Productos</h2>
+<br />
+<a class="btn btn-primary" href="productos/crear">Nuevo</a>
+<br />
+<table>
+    <tr>
+        <th>Codigo</th>
+        <th>Nombre</th>
+    </tr>
+    @if (productos == null)
+    {
+        <tr>Cargando.....</tr>
+    }
+    else if (productos.Count == 0)
+    {
+        <tr>No existen productos</tr>
+    }
+    else
+    {
+
+
+
+        @foreach (var item in productos)
+        {
+            <tr>
+                <td>@item.CodProducto</td>
+                <td>@item.NombreProducto</td>
+                <td>
+                    <a class="btn btn-success"
+                       href="productos/editar/@item.ID/@item.CodProducto/@item.NombreProducto">
+                        Editar
+                    </a>
+                </td>
+                <td><button class="btn btn-warning" @onclick="() => Eliminar(item)">Eliminar</button></td>
+            </tr>
+        }
+    }
+</table>
+<Confirmacion @ref="confirmacion"
+              onConfirm="GrabarEliminar"
+              onCancel="Cancelar">
+
+    <div>¿Desea eliminar el producto @eliminarProducto.NombreProducto?</div>
+</Confirmacion>
+
+@code {
+
+
+    List<TrabajoPracticoVerdadero.Comunes.datos.Entidades.Producto> productos = new();
+    Confirmacion confirmacion;
+    string codProducto = "";
+    string nomProducto = "";
+    TrabajoPracticoVerdadero.Comunes.datos.Entidades.Producto eliminarProducto;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        productos = new()
+        {
+                new TrabajoPracticoVerdadero.Comunes.datos.Entidades.Producto() { CodProducto = "ar", NombreProducto = "Arvejas" },
+                new TrabajoPracticoVerdadero.Comunes.datos.Entidades.Producto() { CodProducto = "es", NombreProducto = "Espagetti" }
+            };
+    }
+
+    private void Eliminar(TrabajoPracticoVerdadero.Comunes.datos.Entidades.Producto productoEliminar)
+    {
+        confirmacion.Mostrar();
+        codProducto = productoEliminar.CodProducto;
+        nomProducto = productoEliminar.NombreProducto;
+        eliminarProducto = productoEliminar;
+    }
+
+
+    private void GrabarEliminar()
+    {
+        productos.Remove(eliminarProducto);
+        Cancelar();
+    }
+
+    private void Cancelar()
+    {
+        confirmacion.Ocultar();
+        eliminarProducto = null;
+    }
+
+
+
+
+
+
+
+
+
+}
+

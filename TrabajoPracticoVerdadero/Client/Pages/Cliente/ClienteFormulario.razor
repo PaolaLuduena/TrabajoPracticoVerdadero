@@ -1,0 +1,29 @@
+﻿<EditForm Model="Cliente" OnInvalidSubmit="onValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Codigo</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Cliente.CodCliente" />
+            <ValidationMessage For="@(() => Cliente.CodCliente)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Nombre del cliente</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Cliente.NombreCliente" />
+            <ValidationMessage For="@(() => Cliente.NombreCliente)" />
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <button class="btn btn-secondary" @onclick="onCancel" type="button">Cancelar</button>
+</EditForm>
+
+@code {
+
+    [Parameter] public Cliente Cliente { get; set; }
+    [Parameter] public EventCallback onValidSubmit { get; set; }
+    [Parameter] public EventCallback onCancel { get; set; }
+    
+
+
+}
