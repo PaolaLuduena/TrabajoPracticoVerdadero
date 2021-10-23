@@ -22,21 +22,21 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Producto>> Get()
+        public async Task <ActionResult<List<Producto>>> Get()
         {
             // Select * from Paises ----- SQL
-            return context.Productos.Include(x=> x.Cliente).ToList();//devuelve una lista de paises
+            return await context.Productos.ToListAsync();//devuelve una lista de paises
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<Producto> Get(int id)//devuelve un id de pais,sobrecarga de metodos mismo nombre, pero destinta cantidad de parametros
+        public async Task<ActionResult<Producto>> Get(int id)//devuelve un id de pais,sobrecarga de metodos mismo nombre, pero destinta cantidad de parametros
                                                 //devuelve un pais
 
         {
             // Select * from Paises Where Id = id ----- SQL
 
             //variable que guarda un pais
-            var producto = context.Productos.Where(x => x.ID == id).Include(x => x.Cliente).FirstOrDefault();
+            var producto = await context.Productos.Where(x => x.ID == id).Include(x => x.Cliente).FirstOrDefaultAsync();
             //contex es un objeto en la base de datos,paises=tabla paises dentro de la base de datos,x=es un registro de paises que deve cumplir la condicion,
 
             if (producto == null)
@@ -48,12 +48,12 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Producto> Post(Producto producto)
+        public async Task<ActionResult<Producto>> Post(Producto producto)
         {
             try
             {
                 context.Productos.Add(producto);//adiciona un pais,agrega un pais
-                context.SaveChanges();
+               await context.SaveChangesAsync();
                 return producto;//retorna pais
             }
             catch (Exception e)
@@ -63,7 +63,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, [FromBody] Producto producto)//modificamos un pais
+        public async Task<ActionResult> Put(int id, [FromBody] Producto producto)//modificamos un pais
                                                                    //FromBody donde lo quiere poner
         {
             if (id != producto.ID)
@@ -71,7 +71,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
                 return BadRequest("Datos incorrectos");//retorna un mensaje de error
             }
 
-            var pepe = context.Productos.Where(x => x.ID == id).FirstOrDefault();//verifica si existe la variable pepe
+            var pepe = await context.Productos.Where(x => x.ID == id).FirstOrDefaultAsync();//verifica si existe la variable pepe
             if (pepe == null)
             {
                 return NotFound("no existe el producto a modificar.");
@@ -83,7 +83,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
             try
             {
                 context.Productos.Update(pepe);//actualiza la tabla con los datos nuevos
-                context.SaveChanges();//hace un comit de esos datos
+                await context.SaveChangesAsync();//hace un comit de esos datos
                 return Ok("Los datos han sido cambiados");
             }
             catch (Exception e)
@@ -93,9 +93,9 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)//borramos un pais
+        public async Task<ActionResult> Delete(int id)//borramos un pais
         {
-            var producto = context.Productos.Where(x => x.ID == id).FirstOrDefault();
+            var producto = await context.Productos.Where(x => x.ID == id).FirstOrDefaultAsync();
             if (producto == null)
             {
                 return NotFound($"No existe el producto con id igual a {id}.");
@@ -104,7 +104,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
             try
             {
                 context.Productos.Remove(producto);//elimina
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return Ok($"El producto {producto.NombreProducto} ha sido borrado.");
             }
             catch (Exception e)

@@ -22,20 +22,20 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Cliente>>Get()
+        public async Task<ActionResult<List<Cliente>>>Get()
         {
-            
-            return  context.Clientes.Include(x => x.Productos).ToList();//devuelve una lista de clientes
+            //return context.Clientes.Include(x => x.Productos).ToList();
+            return  await context.Clientes.ToListAsync();//devuelve una lista de clientes
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<Cliente>Get(int id)//devuelve un id de cliente,sobrecarga de metodos mismo nombre, pero destinta cantidad de parametros
+        public async Task<ActionResult<Cliente>>Get(int id)//devuelve un id de cliente,sobrecarga de metodos mismo nombre, pero destinta cantidad de parametros
                                              //devuelve un cliente
         {
             
 
             //variable que guarda un cliente
-            var cliente = context.Clientes.Where(x => x.ID == id).Include(x => x.Productos).FirstOrDefault();
+            var cliente = await context.Clientes.Where(x => x.ID == id).Include(x => x.Productos).FirstOrDefaultAsync();
             //contex es un objeto en la base de datos,cliente=tabla cliente dentro de la base de datos,x=es un registro de cliente que deve cumplir la condicion,
 
             if (cliente == null)
@@ -47,12 +47,12 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
        }
 
         [HttpPost]
-        public ActionResult<Cliente>Post(Cliente cliente)
+        public async Task<ActionResult<Cliente>>Post(Cliente cliente)
         {
             try
             {
                 context.Clientes.Add(cliente);//adiciona un cliente,agrega un cliente
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return cliente;//retorna cliente
             }
             catch (Exception e)
@@ -62,7 +62,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, [FromBody] Cliente cliente)//modificamos un cliente
+        public async Task<ActionResult> Put(int id, [FromBody] Cliente cliente)//modificamos un cliente
                                                              //FromBody donde lo quiere poner
         {
             if (id != cliente.ID)
@@ -70,7 +70,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
                 return BadRequest("Datos incorrectos");//retorna un mensaje de error
             }
 
-            var pepe =  context.Clientes.Where(x => x.ID == id).FirstOrDefault();//verifica si existe la variable pepe
+            var pepe =  await context.Clientes.Where(x => x.ID == id).FirstOrDefaultAsync();//verifica si existe la variable pepe
             if (pepe == null)
             {
                 return NotFound("no existe el cliente a modificar.");
@@ -80,7 +80,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
             try
             {
                 context.Clientes.Update(pepe);//actualiza la tabla con los datos nuevos
-                context.SaveChanges();//hace un comit de esos datos
+                await context.SaveChangesAsync();//hace un comit de esos datos
 
                 return Ok("Los datos han sido cambiados");
             }
@@ -102,7 +102,7 @@ namespace TrabajoPracticoVerdadero.Server.Controllers
             try
             {
                 context.Clientes.Remove(cliente);//elimina
-                context.SaveChanges();
+               await context.SaveChangesAsync();
 
                 return Ok($"El cliente {cliente.NombreCliente} ha sido borrado.");
             }

@@ -1,5 +1,6 @@
-﻿@page "/clientes/editar/{ClienteID:int}/{codCliente}/{nombCliente}"
+﻿@page "/clientes/editar/{ClienteID:int}"
 @inject NavigationManager  navigationManager
+@inject IHttpService1 http
 
 <h2>Modificar Cliente</h2>
 <ClienteFormulario onValidSubmit="GrabarModificacion" Cliente="cliente" onCancel="Cancelar" />
@@ -8,29 +9,60 @@
 
     private Cliente cliente;
     [Parameter] public int ClienteID { get; set; }
-    [Parameter] public string codCliente { get; set; }
-    [Parameter] public string nombCliente { get; set; }
+    // [Parameter] public string codCliente { get; set; }
+    //[Parameter] public string nombCliente { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
 
-        cliente = new()
+
+        await MostrarCliente();
+
+
+        // cliente = new()
+
+        //ID = ClienteID,
+        //CodCliente = codCliente,
+        //NombreCliente = nombCliente
+
+
+
+    }
+
+    private async Task MostrarCliente()
+    {
+        var httpRespuesta = await http.Get<Cliente>($"api/clientes/{ClienteID}");
+        if (httpRespuesta.Error)
         {
-            ID = ClienteID,
-            CodCliente = codCliente,
-            NombreCliente = nombCliente
-        };
+            var body = await httpRespuesta.GetBody();
+        }
+        else
+        {
+            cliente = httpRespuesta.Respuesta;
+        }
+    }
 
 
-}
+
+
+
+
+
 
     private async Task GrabarModificacion()
     {
-        Console.WriteLine($"Graba modificacion {cliente.NombreCliente}");
+        var httpRespuesta = await http.Put<Cliente>($"api/clientes/{ClienteID}", cliente);
+        if (httpRespuesta.Error)
+        {
+            var body = await httpRespuesta.GetBody();
+        }
+
+
+        //Console.WriteLine($"Graba modificacion {cliente.NombreCliente}");
         navigationManager.NavigateTo("/clientes");
     }
 
-    private async Task Cancelar()
+    private void Cancelar()
     {
         navigationManager.NavigateTo("/clientes");
 

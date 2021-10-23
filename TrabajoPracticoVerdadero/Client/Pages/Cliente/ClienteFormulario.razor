@@ -1,4 +1,4 @@
-﻿<EditForm Model="Cliente" OnInvalidSubmit="onValidSubmit">
+﻿<EditForm Model="Cliente" OnValidSubmit="onValidSubmit">
     <DataAnnotationsValidator />
     <div class="form-group">
         <label>Codigo</label>
@@ -14,8 +14,10 @@
             <ValidationMessage For="@(() => Cliente.NombreCliente)" />
         </div>
     </div>
-    <button class="btn btn-primary" type="submit">Guardar</button>
-    <button class="btn btn-secondary" @onclick="onCancel" type="button">Cancelar</button>
+
+    <button class="btn btn-outline-success" type="submit">Guardar</button>
+    <button class="btn btn-outline-secondary" @onclick="onCancel" type="button">Cancelar</button>
+
 </EditForm>
 
 @code {

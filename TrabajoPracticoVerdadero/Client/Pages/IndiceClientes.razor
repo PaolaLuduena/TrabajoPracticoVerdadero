@@ -1,13 +1,23 @@
 ﻿@page "/clientes"
+@inject IHttpService1 http
+
+
 <h2>Clientes</h2>
-<br />
-<a class="btn btn-primary" href="clientes/crear">Nuevo</a>
-<br />
-<table>
+
+<div class="d-grid gap-2 ">
+    
+    <a class="btn btn-outline-light" href="clientes/crear">Nuevo</a>
+
+</div>
+
+
+
+<table class="table">
     <tr>
-        <th>Codigo</th>
-        <th>Nombre</th>
+        <th class="text-danger">Codigo</th>
+        <th class="text-danger">Nombre</th>
     </tr>
+
     @if (clientes == null)
     {
         <tr>Cargando...</tr>
@@ -26,14 +36,15 @@
                 <td>@item.CodCliente</td>
                 <td>@item.NombreCliente</td>
                 <td>
-                    <a class="btn btn-success"
-                       href="clientes/editar/@item.ID/@item.CodCliente/@item.NombreCliente">
+                    <a class="btn btn-outline-success"
+                       href="clientes/editar/@item.ID/">
                         Editar
                     </a>
                 </td>
-                
+
                 <td>
-                <button class="btn btn-warning" @onclick="()=>Eliminar(item)">Eliminar</button></td>
+                    <button class="btn btn-outline-warning" @onclick="()=>Eliminar(item)">Eliminar</button>
+                </td>
             </tr>
         }
     }
@@ -41,8 +52,12 @@
 
 <Confirmacion @ref="confirmacion"
               onConfirm="GrabarEliminar"
-              onCancel="Cancelar">
-             
+              onCancel="Cancelar"
+              Titulo="BORRAR"
+              textCancelar="Salir"
+              textOk="Aceptar"
+              >
+
     <div>¿Desea eliminar el cliente @eliminarCliente.NombreCliente?</div>
 </Confirmacion>
 
@@ -55,59 +70,59 @@
 
 @*if (nuevo) //nuevo es una variable no un metodo
 
-    {
-
-
-        @if (editar || eliminar)
-
         {
-            Cancelar();
-            nuevo = true;
+
+
+            @if (editar || eliminar)
+
+            {
+                Cancelar();
+                nuevo = true;
+
+            }
+
+            <br />
+            <h3>Nuevo Cliente</h3>
+            <br />
+            <input placeholder="Còdigo de Clientes" @bind="codCliente" />
+            <input placeholder="Nombre de Clientes" @bind="nombCliente" />
+            <button class="btn btn-success" @onclick="AgregarCliente">Agregar</button>
+            <button class="btn btn-info" @onclick="Cancelar">Cancelar</button>
+
 
         }
 
+    @if (editar) //editar es una variable no un metodo
+
+    {
+
         <br />
-        <h3>Nuevo Cliente</h3>
+        <h3>Editar Cliente</h3>
         <br />
         <input placeholder="Còdigo de Clientes" @bind="codCliente" />
         <input placeholder="Nombre de Clientes" @bind="nombCliente" />
-        <button class="btn btn-success" @onclick="AgregarCliente">Agregar</button>
+        <button class="btn btn-success" @onclick="GrabarEditar">Grabar</button>
         <button class="btn btn-info" @onclick="Cancelar">Cancelar</button>
 
 
     }
 
-@if (editar) //editar es una variable no un metodo
-
-{
-
-    <br />
-    <h3>Editar Cliente</h3>
-    <br />
-    <input placeholder="Còdigo de Clientes" @bind="codCliente" />
-    <input placeholder="Nombre de Clientes" @bind="nombCliente" />
-    <button class="btn btn-success" @onclick="GrabarEditar">Grabar</button>
-    <button class="btn btn-info" @onclick="Cancelar">Cancelar</button>
 
 
-}
+    @if (eliminar) //editar es una variable no un metodo
+
+    {
+
+        <br />
+        <h3>Eliminar Cliente</h3>
+        <br />
+        <input placeholder="Còdigo de Clientes" @bind="codCliente" />
+        <input placeholder="Nombre de Clientes" @bind="nombCliente" />
+        <button class="btn btn-success" @onclick="GrabarEliminar">Eliminar</button>
+        <button class="btn btn-info" @onclick="Cancelar">Cancelar</button>
 
 
-
-@if (eliminar) //editar es una variable no un metodo
-
-{
-
-    <br />
-    <h3>Eliminar Cliente</h3>
-    <br />
-    <input placeholder="Còdigo de Clientes" @bind="codCliente" />
-    <input placeholder="Nombre de Clientes" @bind="nombCliente" />
-    <button class="btn btn-success" @onclick="GrabarEliminar">Eliminar</button>
-    <button class="btn btn-info" @onclick="Cancelar">Cancelar</button>
-
-
-}*@
+    }*@
 
 
 @code {
@@ -115,25 +130,38 @@
         //List<Cliente> clientes = new List<Cliente>();
         List<TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente> clientes;
         Confirmacion confirmacion;//confirmacion es una propiedad
-        string codCliente = "";
-        string nombCliente = "";
+                                  // string codCliente = "";
+                                  //string nombCliente = "";
         TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente eliminarCliente;
 
 
-        protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
+        await Leer();
 
-
-
-
-
-        clientes = new()
-        {
-            new TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente() { CodCliente = "Al", NombreCliente = "Alvina" },
-            new TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente() { CodCliente = "Be", NombreCliente = "Belen" }
-        };
     }
+
+    private async Task Leer()
+    {
+
+        var respuestaHttp = await http.Get<List<TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente >> ("api/clientes");
+        if (!respuestaHttp.Error)
+        {
+            clientes = respuestaHttp.Respuesta;
+        }
+
+
+    }
+
+
+
+    // clientes = new()
+
+    //new TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente() { CodCliente = "Al", NombreCliente = "Alvina" },
+    // new TrabajoPracticoVerdadero.Comunes.datos.Entidades.Cliente() { CodCliente = "Be", NombreCliente = "Belen" }
+
+
 
 
 
@@ -143,8 +171,8 @@
     {
 
         confirmacion.Mostrar();//confirmacion minuscula es una propiedad
-        codCliente = clienteEliminar.CodCliente;
-        nombCliente = clienteEliminar.NombreCliente;
+                               //codCliente = clienteEliminar.CodCliente;
+                               // nombCliente = clienteEliminar.NombreCliente;
         eliminarCliente = clienteEliminar;
     }
 
@@ -153,12 +181,22 @@
 
 
 
-    private void GrabarEliminar()
+    private async Task GrabarEliminar()
 
     {
+        var respuesta = await http.Delete($"api/clientes/{eliminarCliente.ID}");
+        if (respuesta.Error)
+        {
+            var body = await respuesta.GetBody();
+        }
 
-        clientes.Remove(eliminarCliente);
         Cancelar();
+        await Leer();
+
+
+
+       // clientes.Remove(eliminarCliente);
+        //Cancelar();
 
     }
 

@@ -18,17 +18,19 @@
                                 @ChildContent
                             </div>
                             <div class="modal-footer">
-                                @if (verCancelar)
-                                {
-                                <button @onclick="onCancel" type="button" class="btn btn-secondary"
+
+                              @if (verCancelar)
+                               {
+                                <button @onclick="onCancel" type="button" class="btn btn-outline-secondary"
                                         data-dismiss="modal">
-                                    Cancelar
+                                    @textCancelar
                                 </button>}
                                 @if (verOk)
                                 {
 
-                                <button @onclick="onConfirm" type="button" class="btn btn-primary"
-                                   >Aceptar
+                                <button @onclick="onConfirm" type="button" class="btn btn-outline-primary"
+                                   >
+                                    @textOk
                                 </button>
                                 }
                             </div>
@@ -41,21 +43,19 @@
     private bool MostrarConfirmacion = false;
     [Parameter] public bool verCancelar { get; set; } = true;
     [Parameter] public bool verOk { get; set; } = true;
+    [Parameter] public string textCancelar { get; set; } = "Calcelar";
+    [Parameter] public string textOk{ get; set; } = "Aceptar";
     [Parameter] public string Titulo { get; set; } = "Confirmación";
     [Parameter] public EventCallback onConfirm { get; set; }
     [Parameter] public EventCallback onCancel { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    public void Mostrar()
-    {
-        MostrarConfirmacion = true;
-    }
+    public void Mostrar()=> MostrarConfirmacion = true;
+    
 
-    public void Ocultar()
-    {
-        MostrarConfirmacion = false;
+    public void Ocultar()=> MostrarConfirmacion = false;
 
 
-    }
+    
 
 }
